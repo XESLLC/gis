@@ -11,5 +11,6 @@
     "url": "gis"
   },
   "author": "Abramowitz",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }
