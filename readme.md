@@ -47,6 +47,8 @@ The solution to this exercise uses node and express run a local server on port 4
 "pg": "^8.5.1",
 "sequelize": "^6.4.0"
 
+Typing 'npm install' from the command line of this apps root directory should load these packages.
+
 This exercise uses two API's.
 
 The first API populates the example Gridics Engineering record (https://docs.google.com/spreadsheets/d/1uGUfjQr2lDzd8gzriEoibCdLDIrMbwCnp3fEkfa7Gs0/edit#gid=1491966258) into tables. The second API computes the reference implementation calculations.
