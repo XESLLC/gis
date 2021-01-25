@@ -1,7 +1,7 @@
-const https = require('https')
-const zlib = require('zlib');
+import https from'https'
+import zlib from 'zlib';
 
-//node -e 'require("./index").getCountAndAverageParcelSize()'
+//node index
 function getCountAndAverageParcelSize() {
     console.log('starting gis function getCountAndAverageParcelSize ')
     const options = {
@@ -34,4 +34,4 @@ function getCountAndAverageParcelSize() {
     }).end()
 }
 
-module.exports.getCountAndAverageParcelSize = getCountAndAverageParcelSize
+getCountAndAverageParcelSize();

@@ -5,20 +5,24 @@
 #### Component Design Exercise
 #### Database Modeling & SQL Exercise
 ---
+
 #### General
 The three exercises above, 'Code Writing', 'Component Design' and 'Database Modeling & SQL Exercise' are completed in this node app.
 
-To run the solutions for these exercises, copy this node app to a new directory or one of your choosing.
+To run the solutions, copy this app to a directory of your choosing.
 ---
+
 #### Code Writing Exercise
-In your terminal, navigate to the root directory and run the following on the command line:
+In your terminal, navigate to the root directory and enter the following on the command line:
 
-node -e 'require("./index").getCountAndAverageParcelSize()'
+node index
 
-This will run an exported module in the index.js file.
-It will log results to your console which includes 'Number of Parcels:  1000' and
-'Average Parcel Size:  8802.0090703125'.
+This will run the entire javascript file 'index.js'.
+It will log results to your console, including:
+'Number of Parcels:  1000'
+'Average Parcel Size:  8802.0090703125'
 ---
+
 #### Component Design Exercise
 In your terminal, navigate to the root directory and run the following on the command line:
 
@@ -38,6 +42,7 @@ x2 changed a4 8
 
 Please note, the last two output lines were not requested in the exercise, but are used to confirm functionality
 ---
+
 #### Database Modeling & SQL Exercise
 
 The solution to this exercise uses node and express run a local server on port 4000 which makes queries to a postgres database. Please load the following node packages to run this exercise:

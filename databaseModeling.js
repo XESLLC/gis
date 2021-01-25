@@ -109,11 +109,9 @@ const ZoningRule = sequelize.define('ZoningRule', {
 // - associations
 LandParcel.hasOne(Zone);
 Zone.belongsTo(LandParcel)
-Zone.sync();
 
 Zone.hasOne(ZoningRule)
 ZoningRule.belongsTo(Zone)
-ZoningRule.sync()
 
 sequelize.sync({force: true}).then(() => {
     app.listen(4000, () => {
@@ -137,7 +135,7 @@ app.post('/createLandParcelZoneAndZoneRule', async (req, res) => {
             res.status(400).send(err.message)
         })
 
-        await Zone.create({
+        const newZone = await Zone.create({
             LandParcelId: newLandParcel.id
         }).catch(function (err) {
             console.log('Database Error',err)
