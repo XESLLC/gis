@@ -7,30 +7,30 @@ app.use(cors());
 const sequelize = new Sequelize('postgres://postgres:postgres@localhost:5432/gisDb');
 // - models
 const LandParcel = sequelize.define('LandParcel', {
-  id: {
-    type: Sequelize.UUID,
-    unique: true,
-    primaryKey: true,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false,
-    validate: {
-        notEmpty: true,
+    id: {
+        type: Sequelize.UUID,
+        unique: true,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+        },
     },
-  },
-  area: {
-    type: DataTypes.FLOAT,
-    allowNull: false
-  },
-  width: {
-    type: DataTypes.FLOAT,
-    allowNull: false
-  },
-  length: {
-    type: DataTypes.FLOAT,
-    allowNull: false
+    area: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    width: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    length: {
+        type: DataTypes.FLOAT,
+        allowNull: false
   }
 }, {
-  tableName: 'land_parcel'
+    tableName: 'land_parcel'
 });
 
 const Zone = sequelize.define('Zone', {
@@ -50,63 +50,63 @@ const Zone = sequelize.define('Zone', {
 
 const ZoningRule = sequelize.define('ZoningRule', {
     id: {
-      type: Sequelize.UUID,
-      unique: true,
-      primaryKey: true,
-      defaultValue: Sequelize.UUIDV4, // was UUIDV4
-      validate: {
-          notEmpty: true,
-      },
+        type: Sequelize.UUID,
+        unique: true,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4, // was UUIDV4
+        validate: {
+            notEmpty: true,
+        },
     },
     maxNumOfLevels: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     maxLotCoverage: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     frontSetBack: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     sideSetBack: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     rearSetBack: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     far: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     density: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     minUnitSize: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     minResParking: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     minOfficeParking: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     minCommParking: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+        type: DataTypes.FLOAT,
+        allowNull: false
     }
 }, {
     tableName: 'zoning_rule'
 });
-// - associations
 
+// - associations
 LandParcel.hasOne(Zone);
 Zone.belongsTo(LandParcel)
 Zone.sync();
@@ -116,12 +116,12 @@ ZoningRule.belongsTo(Zone)
 ZoningRule.sync()
 
 sequelize.sync({force: true}).then(() => {
-  app.listen(4000, () => {
-    console.log(`Example app listening on port ${4000}!`)
-  });
+    app.listen(4000, () => {
+        console.log(`Example Database Modeling & SQL Exercise listening on port ${4000}!`)
+    });
 });
 
-// localhost:4000/createLandParcelZoneAndZoneRule with headers (see readme)
+// localhost:4000/createLandParcelZoneAndZoneRule
 app.post('/createLandParcelZoneAndZoneRule', async (req, res) => {
     console.log('starting createLandParcelZoneAndZoneRule')
     const args = req.headers
@@ -137,14 +137,14 @@ app.post('/createLandParcelZoneAndZoneRule', async (req, res) => {
             res.status(400).send(err.message)
         })
 
-        const newZone = await Zone.create({
+        await Zone.create({
             LandParcelId: newLandParcel.id
         }).catch(function (err) {
             console.log('Database Error',err)
             res.status(400).send(err.message)
         })
 
-        const newZoneRule = await ZoningRule.create({
+        await ZoningRule.create({
             ZoneId: newZone.id,
             maxNumOfLevels: args.max_num_of_levels,
             maxLotCoverage: args.max_lot_coverage,
@@ -163,11 +163,11 @@ app.post('/createLandParcelZoneAndZoneRule', async (req, res) => {
         })
     }
     await createLandParcelZoneAndZoneRule();
-    console.log('results', newLandParcel.id) // use this id below in CalcMaxDevCapAllowed
-    res.status(200).send(newLandParcel.id)
+    console.log('new land parcel id: ', newLandParcel.id)
+    res.status(200).send(newLandParcel.id) // use this id below in CalcMaxDevCapAllowed
 })
 
-// localhost:4000/CalcMaxDevCapAllowed with headers -> id:[id from api createLandParcelZoneAndZoneRule ] residential_density: [do_not_round], lodging_density: [do_not_round]
+// localhost:4000/CalcMaxDevCapAllowed
 app.get('/CalcMaxDevCapAllowed', async (req, res) => {
     console.log('starting CalcMaxDevCapAllowed')
     const args = req.headers
@@ -196,15 +196,15 @@ app.get('/CalcMaxDevCapAllowed', async (req, res) => {
           res.status(400).send(err.message)
       })
       const rule = parcel.Zone.ZoningRule.dataValues
-
+      // calculate max footprint
       const maxFootprintByCoverage = (parcel.area * rule.maxLotCoverage) / 100 //max lot coverage is a percent
       const maxFootprintBySetback = (parcel.length - rule.frontSetBack - rule.rearSetBack) * (parcel.width - (rule.sideSetBack * 2))
       result.maximum_footprint = maxFootprintByCoverage <= maxFootprintBySetback?  maxFootprintByCoverage : maxFootprintBySetback
-
+      // calculate max capacity
       const maxCapacityByFar = parcel.area * rule.far
       const maxCapacityByBulk = rule.maxNumOfLevels * result.maximum_footprint
       result.maximum_capacity = maxCapacityByFar <= maxCapacityByBulk?  maxCapacityByFar : maxCapacityByBulk;
-
+      // calculate max dwelling units
       const maxUnitsByDensityPreRound = (parcel.area / 43560) * rule.density
       let maxUnitsByDensity
       if (args.residential_density == 'round_up') {
